@@ -6,6 +6,10 @@ import { MongoClient } from "mongodb";
 import template from "./../template";
 
 const app = express();
+
+// npm run build will generate client and server code bundles
+// Remove devbundle.compile before prduction mode
+// npm run start will run bundled code for production
 devbundle.compile(app);
 
 const CURRENT_WORKING_DIR = process.cwd();
@@ -15,16 +19,12 @@ app.get("/", (req, res) => {
   res.status(200).send(template());
 });
 
-
 const url =
   process.env.MONGODB_URI || "mongodb://localhost:27017/mernSimpleSetup";
 MongoClient.connect(url, (err, db) => {
   console.log("Connected successfully to mongodb server");
   db.close();
 });
-
-
-
 
 let port = process.env.PORT || 3000;
 app.listen(port, function onStart(err) {
@@ -33,4 +33,3 @@ app.listen(port, function onStart(err) {
   }
   console.log("Server started on port %s.", port);
 });
-
