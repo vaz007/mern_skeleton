@@ -1,35 +1,20 @@
-import express from "express";
-import devbundle from "./devBundle";
-import path from "path";
-import { MongoClient } from "mongodb";
+import app from "./express";
+import mongoose from "mongoose";
 
-import template from "./../template";
+import config from "./../config/config";
 
-const app = express();
-
-// npm run build will generate client and server code bundles
-// Remove devbundle.compile before prduction mode
-// npm run start will run bundled code for production
-devbundle.compile(app);
-
-const CURRENT_WORKING_DIR = process.cwd();
-app.use("/dist", express.static(path.join(CURRENT_WORKING_DIR, "dist")));
-
-app.get("/", (req, res) => {
-  res.status(200).send(template());
+mongoose.Promise = global.Promise;
+mongoose.set("useCreateIndex", true);
+mongoose.connect(config.mongoUri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 });
-
-const url =
-  process.env.MONGODB_URI || "mongodb://localhost:27017/mernSimpleSetup";
-MongoClient.connect(url, (err, db) => {
-  console.log("Connected successfully to mongodb server");
-  db.close();
+mongoose.connection.on("error", () => {
+  throw new Error(`Unable to connect to MongoDb : ${mongoUri}`);
 });
-
-let port = process.env.PORT || 3000;
-app.listen(port, function onStart(err) {
+app.listen(config.port, err => {
   if (err) {
     console.log(err);
   }
-  console.log("Server started on port %s.", port);
+  console.log("Server started on Port : ", config.port);
 });
