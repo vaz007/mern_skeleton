@@ -29,7 +29,7 @@ app.get("", (req, res) => {
   
 app.use(userRoutes)
 
-//app.use(authRoutes)
+app.use(authRoutes)
 
 app.use((err, req, res, next) => {
   if (err.name === "UnauthorizedError") {
